@@ -221,7 +221,7 @@ Class를 활용했을 때의 문제점 때문에 나는 각 계층의 로직들�
 ```typescript
 // user-repository.ts 
 export const UserPgRepository: UserRepository = { 
-    async create(user: User): Promise<User> { 
+    create: async (user: User): Promise<User> => { 
         const query = 'INSERT INTO users(id, name, email) VALUES($1, $2, $3) RETURNING *'
         const values = [user.id, user.name, user.email]
 
