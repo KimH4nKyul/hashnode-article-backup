@@ -57,11 +57,87 @@ Clean Architecture는 유지 보수와 테스트 가능한 코드를 제공하�
 
 첫째, **의존성 역전 원칙**을 적용한다. 이는 고수준 모듈이 저수준 모듈에 의존하지 않고 **추상화**에 의존하게 만드는 것이다. 위 그림(오른쪽 아래)에서 볼 수 있듯이, `Controller`는 Flow of Control에 따라 구현체가 아닌 `Use Case Input Port`라고 하는 추상화에 의존하고 있는 것을 확인할 수 있다. 또한 `Interactor`는 `Presenter` 구현체가 아닌 `Use Case Output Port`에 의존한다.
 
-이러한 원칙은 테스트 할 때 저수준 모듈(실제 구현체)이 아닌 Mock이나 Stub으로 대체해 외부 의존성(데이터베이스, 다른 외부 서비스 등)으로 부터 애플리케이션 로직을 독립시키기 때문에 필요한 설정 작업을 줄여주고, 테스트 실행 속도를 빠르게 한다.
+이러한 원칙은 테스트 할 때 저수준 모듈(실제 구현체)이 아닌 Mock, Stub이나 Fake 등으로 대체해 외부 의존성(데이터베이스, 다른 외부 서비스 등)으로 부터 애플리케이션 로직을 독립시키기 때문에 필요한 설정 작업을 줄여주고, 테스트 실행 속도를 빠르게 한다.
 
-## Problem #2.
+---
 
-Express 환경에서 Clean Architecture를 도입할 때 고려했던 사항 중에 테스트 가능성 외에도 하나 더 있었다. 어떤 방법으로 의존성을 주입해야 하는가였다.
+```typescript
+export interface UserRepository { 
+    findById(id: string): Promise<User>
+}
+
+export class UserPgRepository implements UserRepository { 
+    async findById(id: string): Promise<User> {
+        // Postgres에서 User를 조회하는 로직이 있다고 가정 
+        return user 
+    }
+}
+
+export interface UserReadUsecase { 
+    findById(id: string): Promise<User> 
+}
+
+export class UserReadService implements UserReadUsecase { 
+    constructor(private readonly repository: UserReadRepository) {} 
+    
+    async findById(id: string): Promise<User> {
+        return this.repository.findById(id)
+    }
+}
+```
+
+위 예제 코드와 같이 `UserReadService`는 의존성 역전 원칙을 통해 `UserPgRepository` 같이 특정 데이터베이스에 의존하는 구현체가 아닌 `UserRepository`라는 추상화에 의존하도록 한다.
+
+이는 외부 인프라에 대한 의존성을 낮춰 테스트하기 쉽게 한다. 또한 코드에 대한 결합도를 낮춰 어떤 데이터베이스로 교체한다고 해도 `UserReadService`가 `UserRepository`에 의존하는 것을 변경할 필요가 없이 확장할 수 있다.
+
+---
+
+```typescript
+class MockUserRepository implements UserRepository { 
+    async findById(id: string): Promise<User> { 
+        return { 
+            id: id,
+            name: 'Kyulog',
+            email: 'kyulog@hashnode.dev'
+        }
+    }
+}
+
+describe('UserReadService', () => {
+    it('should return a user by id', async () => {
+        const fakeUserRepository = new MockUserRepository()
+        const userReadService = new UserReadService(fakeUserRepository) 
+        const user = await userReadService.findById(id)
+        
+        expect(user.id).toBe(id)
+        expect(user.name).toBe('Kyulog')
+        expect(user.email).toBe('kyulog@hashnode.dev')
+    })
+})
+```
+
+위 테스트 코드와 같이 개발자는 `UserReadService`가 실제 데이터베이스에 액세스하는 로직과 관련 없이 `UserRepository`를 Mock으로 구현해 테스트하는 데 사용할 수 있다. 이를 통해 원하는 기능을 단순하게 검증할 수 있고, 외부 의존성에 대한 설정과 네트워크 연결 요청이 없기 때문에 테스트 속도가 빨라진다.
+
+---
+
+둘째, **계층 분리**를 적용한다. 이는 각 계층이 비즈니스 룰이라는 명확한 **책임과 역할**을 갖고 독립적인 계층으로 구성됨을 의미한다. 이렇게 함으로써 각 계층을 독립적으로 개발, 테스트, 유지보수할 수 있게 된다. 쉽게 말해, 코드를 수정하거나 기능을 추가할 때 다른 부분에 미치는 영향을 최소화할 수 있다는 것이다.
+
+Clean Architecture는 다음과 같은 계층으로 분리 될 수 있다.
+
+* **엔티티**: 엔터프라이즈 비즈니스 룰을 캡슐화하는 객체로 데이터 구조나 핵심 비즈니스 로직과 정책이 정의된다. 다른 계층에서 이를 사용하기 때문에, 엔티티가 잘 정의되면 이 부분만 변경하거나 추가하여 쉽게 애플리케이션을 교체할 수 있다.
+    
+* **유즈케이스**: 애플리케이션 비즈니스 룰을 정의한다. 엔티티를 사용해 실제로 애플리케이션이 무엇을 해야 하는지를 일련의 프로세스로 실행하게 한다. 예를 들어, '사용자'가 '상품'을 구매하려 할 때, '상품' 데이터를 사용해 일련의 '구매 과정'을 진행하는 로직을 진행하는 것이다.
+    
+* **인터페이스 어댑터**: 웹 페이지, 모바일 앱 화면 등과 애플리케이션 사이에서 변환기 역할을 한다. 외부 요청을 애플리케이션이 필요한 형태로 변환하거나 비즈니스 로직의 결과를 외부에 전달할 수 있는 형태로 변환한다. 예를 들어, 웹 페이지에서 정보를 입력하면 그것을 적절하게 변환해 내부 로직에서 사용하게 한다.
+    
+* **프레임워크 & 드라이버**: 가장 바깥쪽에 위치한 실제 데이터베이스, 웹 프레임워크, 디바이스 드라이버 등 외부 요소와 연결, 통신을 담당한다. 예를 들어, 데이터베이스에 정보를 저장하거나 다른 서비스의 API를 호출하는 것이 해당된다.
+    
+
+---
+
+## Problem
+
+Express 환경에서 Clean Architecture를 도입할 때 고려했던 사항 중에 유지 보수와 테스트 가능성 외에도 하나 더 있었다. 어떤 방법으로 의존성을 주입해야 하는가였다.
 
 나는 원래 커리어 시작을 Spring Boot를 베이스로 시작했기 때문에 컨테이너가 제공해 주는 제어의 역전과 의존성 주입의 편리함에 취해있었다.
 
@@ -138,36 +214,44 @@ UserRouter.post('/api/users/user', userCreateController.execute)
 
 ---
 
-## Conclusion.
+Class를 활용했을 때의 문제점 때문에 나는 각 계층의 로직들을 함수, 객체 리터럴 그리고 모듈 패턴을 적극 이용하기로 했다. 또한 이들을 역할과 책임을 적절히 분리해 로직을 작성해 갔다.
 
-Class를 활용했을 때의 문제점 때문에 나는 컨트롤러나 서비스 같은 것들은 함수형으로 작성하면서 모듈 패턴을 적극 이용하기로 했다.
+모든 것을 함수로 해결하려 하면 코드의 구조화, 상태 관리와 불변성을 유지하기 어렵기 때문에 엔티티, DTO, 유틸리티나 밸리데이터 등과 같은 것들은 Class로 작성했다.
 
 ```typescript
+// user-repository.ts 
+export const UserPgRepository: UserRepository = { 
+    async create(user: User): Promise<User> { 
+        const query = 'INSERT INTO users(id, name, email) VALUES($1, $2, $3) RETURNING *'
+        const values = [user.id, user.name, user.email]
+
+        const { rows } = await pg.query(query, values) 
+        const newUser: User = UserPgEntity.from(rows[0]) 
+        return newUser 
+    }
+}
+
 // user-create-controller.ts
 export const UserCreateController = (userCreateService: UserCreateUsecase) => {
-    return { 
-        execute: async (req: Request, res: Response) => { 
-            const data: UserCreate = req.body
-            const response = UserCreateResponse.from(await userCreateService.execute(data))
-            res.status(200).json(response)
-        }
+    return async (req: Request, res: Response) => {
+        const data: UserCreate = req.body
+        const user = await userCreateService.execute(data)
+        res.status(200).json(user)
     }
 }
 
 // user-create-usecase.ts 
-export const UserCreateService = (userRepository: UserRepository): UserCreateUsecase => { 
-    return { 
-        execute: async (data: UserCreate): Promise<User> => {
-            const user = User.create(...data)
-            const newUser = await userRepository.save(user)
-            return newUser 
-        }
+export const UserCreateService = (userRepository: UserRepository): UserCreateUsecase => ({ 
+    execute: async (data: UserCreate): Promise<User> => {
+        const user = User.create(...data)
+        const newUser = await userRepository.create(user)
+        return newUser 
     }
-}
+})
 
 // user-router.ts
 export const UserRouter = Router() 
-UserRouter.post('/api/users/user', UserCreateController(UserCreateService(UserRepository)).execute)
+UserRouter.post('/api/users/user', UserCreateController(UserCreateService(UserRepository)))
 ```
 
 이렇게 되면 의존성을 관리하는 코드를 따로 작성하지 않아도 된다. 동시에 Class의 정의 시점과 인스턴스화 시점이 동일해 메모리 해제가 되지 않던 문제를 해결하게 된다.
@@ -178,7 +262,9 @@ UserRouter.post('/api/users/user', UserCreateController(UserCreateService(UserRe
 
 > "No Silver Bullet" - Fred Brooks, 1986, ⟪**No Silver Bullet – Essence and Accident in Software Engineering**⟫
 
-그렇다고 해서 함수형이 더 좋다고 할 순 없다. 함수형을 사용하게 되면 상태 관리가 어렵다. 상태 관리를 해야 하면 불변성을 유지하기도 어렵다. 또한, 함수 중첩과 클로저로 복잡한 규모의 애플리케이션에서는 메모리 관리가 어려울 수 있다.
+그렇다고 해서 함수형이 더 좋다고 할 순 없다. 내가 작성한 코드를 함수형으로 바꾸면서 알게 된 사실은 클로저를 사용하는 패턴을 강제할 수 밖에 없다는 것이었다. 이는 복잡한 규모의 애플리케이션에서 메모리 관리를 어렵게 만들 수 있다.
+
+수정하는 중입니다!
 
 위 코드에서 `UserRouter`가 애플리케이션의 생명주기 동안에 `UserCreateController`와 `UserCreateService`를 참조하고 있기 때문에 클로저들은 메모리에서 해제되지 않을 것이다.
 
