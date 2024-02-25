@@ -3,7 +3,6 @@ title: "Express에서 Clean Architecture 적용하기"
 datePublished: Sun Feb 18 2024 11:28:28 GMT+0000 (Coordinated Universal Time)
 cuid: clsrfcctj000108jp42jb0rvh
 slug: express-clean-architecture
-cover: https://cdn.hashnode.com/res/hashnode/image/upload/v1708255815587/4767073b-a4fe-42dc-a658-1e2e954309bf.jpeg
 tags: express, nodejs, typescript
 
 ---
@@ -44,6 +43,21 @@ Clean Architecture는 소프트웨어 구조를 설계하는 개념 중 하나�
 Clean Architecture가 유지 보수성과 테스트 가능성에서 좋은 효과를 주는 이유는 이 아키텍처의 핵심 원칙인 **의존성 규칙**에 있다.
 
 의존성 규칙이란 위 그림에서 볼 수 있듯이 각 계층이 독립적인 비즈니스 룰을 갖고 **외부 계층에서 내부 계층으로만 의존성이 흐르도록 하는 것**이다.
+
+---
+
+## Maintainable and Testable Code.
+
+Clean Architecture는 유지 보수와 테스트 가능한 코드를 제공하게 한다. 그렇다면 어떻게 Clean Architecture가 그런 코드를 제공할 수 있는 것일까?
+
+* **의존성 역전 원칙**
+    
+* **계층 분리**
+    
+
+첫째, **의존성 역전 원칙**을 적용한다. 이는 고수준 모듈이 저수준 모듈에 의존하지 않고 **추상화**에 의존하게 만드는 것이다. 위 그림(오른쪽 아래)에서 볼 수 있듯이, `Controller`는 Flow of Control에 따라 구현체가 아닌 `Use Case Input Port`라고 하는 추상화에 의존하고 있는 것을 확인할 수 있다. 또한 `Interactor`는 `Presenter` 구현체가 아닌 `Use Case Output Port`에 의존한다.
+
+이러한 원칙은 테스트 할 때 저수준 모듈(실제 구현체)이 아닌 Mock이나 Stub으로 대체해 외부 의존성(데이터베이스, 다른 외부 서비스 등)으로 부터 애플리케이션 로직을 독립시키기 때문에 필요한 설정 작업을 줄여주고, 테스트 실행 속도를 빠르게 한다.
 
 ## Problem #2.
 
