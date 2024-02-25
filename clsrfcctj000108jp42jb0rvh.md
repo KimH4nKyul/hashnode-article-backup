@@ -1,5 +1,5 @@
 ---
-title: "Express에서 Clean Architecture 차용하기"
+title: "Express에서 Clean Architecture 적용하기"
 datePublished: Sun Feb 18 2024 11:28:28 GMT+0000 (Coordinated Universal Time)
 cuid: clsrfcctj000108jp42jb0rvh
 slug: express-clean-architecture
@@ -18,23 +18,32 @@ tags: express, nodejs, typescript
 
 ---
 
-## Problem #1.
-
 처음에는 규모가 크지 않다는 점에서 흔하게 볼 수 있는 Three Layered Architecture를 적용하려고 했다. 비즈니스 로직을 처리하는 Domain도 사실상 전무하고 Web3 라이브러리로 모든 프로세스를 처리했기 때문이다.
 
 그러나 내가 만든 기능이 타입을 명확히 검증하고 있는지, 비동기로 동작하는지, 새 이벤트를 제대로 생성하고 있는지 등을 스몰 테스트로 확인하려 하는데 대부분의 기능이 Web3 라이브러리와 블록체인 인프라에 의존하고 있어서 테스트하기 쉽지 않았다.
 
-그래서 Clean Architecture를 차용\*해 라이브러리와 인프라에 의존하는 부분은 추상화와 DIP를 활용해 테스트 가능한 코드로 과감히 바꾸는 시도를 했다.
-
-> 내가 만드는 애플리케이션은 규모가 작기 때문에 모든 개념을 도입하기 보단 일부분 차용해 적용했다.
-> 
-> 모든 것을 도입해 적용하면 관리해야 할 파일도 늘어나고 코드 복잡성이 증가한다고 생각한다.
-> 
-> 가독성이 좋아지지 않는 점은 덤이다.
-> 
-> 적어도 내 동료가 내 코드를 적게 보고 적게 수정해도 단 번에 이해할 수 있어야 한다.
+그래서 Clean Architecture를 적용해 라이브러리와 인프라에 의존하는 부분은 추상화와 DIP를 활용해 테스트 가능한 코드로 과감히 바꾸는 시도를 했다.
 
 ---
+
+## Clean Architecture.
+
+![Clean Coder Blog](https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg align="left")
+
+Clean Architecture는 소프트웨어 구조를 설계하는 개념 중 하나로, Onion Architecture라고도 한다.
+
+이 아키텍처를 프로젝트에 적용했을 때 기대효과는 다음과 같다.
+
+* 유지 보수성
+    
+* 테스트 가능성
+    
+
+---
+
+Clean Architecture가 유지 보수성과 테스트 가능성에서 좋은 효과를 주는 이유는 이 아키텍처의 핵심 원칙인 **의존성 규칙**에 있다.
+
+의존성 규칙이란 위 그림에서 볼 수 있듯이 각 계층이 독립적인 비즈니스 룰을 갖고 **외부 계층에서 내부 계층으로만 의존성이 흐르도록 하는 것**이다.
 
 ## Problem #2.
 
