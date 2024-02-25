@@ -316,6 +316,8 @@ describe('UserReadService', () => {
 
 * [https://dev.to/bespoyasov/clean-architecture-on-frontend-4311](https://dev.to/bespoyasov/clean-architecture-on-frontend-4311)
     
+* [https://blog.bitsrc.io/a-clean-and-adaptive-nodejs-architecture-with-typescript-b144c1735447](https://blog.bitsrc.io/a-clean-and-adaptive-nodejs-architecture-with-typescript-b144c1735447)
+    
 
 아무튼 은탄환은 없다. 각자 프로젝트 규모와 개발팀 스타일에 맞게 개발하도록 하자.
 
