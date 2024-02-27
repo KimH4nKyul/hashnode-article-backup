@@ -3,7 +3,7 @@ title: "Express에서 Clean Architecture 적용하기"
 datePublished: Sun Feb 18 2024 11:28:28 GMT+0000 (Coordinated Universal Time)
 cuid: clsrfcctj000108jp42jb0rvh
 slug: express-clean-architecture
-cover: https://cdn.hashnode.com/res/hashnode/image/upload/v1708999383132/745ce2ab-5594-4fa7-b3af-57aaf8b2da8b.jpeg
+cover: https://cdn.hashnode.com/res/hashnode/image/upload/v1708999755344/0359a079-cf2a-4f19-a407-99473ab7974f.webp
 tags: express, nodejs, typescript
 
 ---
@@ -30,9 +30,7 @@ tags: express, nodejs, typescript
 
 ![Clean Coder Blog](https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg align="left")
 
-Clean Architecture는 소프트웨어 구조를 설계하는 개념 중 하나로, Onion Architecture라고도 한다.
-
-이 아키텍처를 프로젝트에 적용했을 때 기대효과는 다음과 같다.
+Clean Architecture는 소프트웨어 구조를 설계하는 개념 중 하나로, 이 아키텍처를 프로젝트에 적용했을 때 기대효과는 다음과 같다.
 
 * 유지 보수성
     
