@@ -3,6 +3,7 @@ title: "Express에서 Clean Architecture 적용하기"
 datePublished: Sun Feb 18 2024 11:28:28 GMT+0000 (Coordinated Universal Time)
 cuid: clsrfcctj000108jp42jb0rvh
 slug: express-clean-architecture
+cover: https://cdn.hashnode.com/res/hashnode/image/upload/v1708999383132/745ce2ab-5594-4fa7-b3af-57aaf8b2da8b.jpeg
 tags: express, nodejs, typescript
 
 ---
