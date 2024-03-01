@@ -1,6 +1,6 @@
 ---
-title: "테스트 주도 개발"
-datePublished: Thu Feb 29 2024 14:24:40 GMT+0000 (Coordinated Universal Time)
+title: "Test Driven Development, 테스트 주도 개발"
+datePublished: Thu Feb 29 2024 15:00:00 GMT+0000 (Coordinated Universal Time)
 cuid: clt7bhb5x00020ajsaeh8ep8p
 slug: 7ywm7iqk7yq4ioyjvouphcdqsjzrsjw
 cover: https://cdn.hashnode.com/res/hashnode/image/upload/v1709216404892/1089e714-c27d-42e7-9d74-dc8725e8f9aa.webp
