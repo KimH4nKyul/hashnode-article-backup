@@ -8,6 +8,27 @@ tags: tdd
 
 ---
 
+## 테스트 주도 개발이란.
+
+테스트 주도 개발, Test Driven Development, **TDD**란 기능을 추가하기 위한 기법중 하나로, 기능을 추가하기 전에 **테스트 루틴**을 먼저 작성해 개발하는 방식이다.
+
+![tdd 워크플로우](https://raw.githubusercontent.com/mjhea0/flaskr-tdd/master/tdd.png align="left")
+
+일반적으로 위 그림과 같은 흐름을 갖고 개발하게 된다.
+
+1. 테스트 추가
+    
+2. 테스트 실패
+    
+3. 테스트 성공
+    
+4. 리팩토링
+    
+5. 반복
+    
+
+## TDD가 주는 이점.
+
 ## Reference.
 
 [https://testdriven.io/test-driven-development/](https://testdriven.io/test-driven-development/)
